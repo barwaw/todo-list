@@ -1,23 +1,39 @@
-import logo from './logo.svg';
-import './App.css';
+import Header from "./components/Header";
+import Todos from "./components/Todos";
+import { useState } from 'react';
+import AddForm from "./components/AddForm";
+import { useEffect } from "react";
+
 
 function App() {
+  const [todos, setTodo] = useState([])
+
+  useEffect(() => {
+    const storedTodos = localStorage.getItem('todos')
+    if(storedTodos) setTodo(JSON.parse(storedTodos))
+  }, [])
+
+  useEffect(() => {
+    localStorage.setItem('todos', JSON.stringify(todos))
+  })
+
+  const deleteTodo = id => {
+    setTodo(todos.filter(todo => id !== todo.id))
+  }
+
+  const addTodo = text => {
+    setTodo([...todos, {id: Date.now(), text: text, done: false}])
+  }
+
+  const toggleDone = id => {
+    setTodo(todos.map(todo => id === todo.id ? {...todo, done: !todo.done} : todo))
+  }
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <Header />
+      <AddForm addTodo={addTodo} />
+      <Todos todos={todos} deleteTodo={deleteTodo} toggleDone={toggleDone} />
     </div>
   );
 }
