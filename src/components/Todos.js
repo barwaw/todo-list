@@ -1,13 +1,30 @@
-import Todo from "./Todo"
+import Todo from "./Todo";
+import { Droppable } from "react-beautiful-dnd";
 
-const Todos = ({todos, deleteTodo, toggleDone}) => {
+const Todos = ({ todos, deleteTodo, toggleDone }) => {
   return (
-    <div className='Todos' > 
-      {todos.map(todo => ( 
-         <Todo id={todo.id} text={todo.text} done={todo.done} deleteTodo={deleteTodo} toggleDone={toggleDone} />
-      ))}
-    </div>
-  )
-}
+    <Droppable droppableId="todos" key="todos">
+      {(provided) => (
+        <div
+          className="Todos"
+          ref={provided.innerRef}
+          {...provided.droppableProps}
+        >
+          {todos.map((todo, index) => (
+            <Todo
+              id={todo.id}
+              text={todo.text}
+              done={todo.done}
+              deleteTodo={deleteTodo}
+              toggleDone={toggleDone}
+              index={index}
+            />
+          ))}
+          {provided.placeholder}
+        </div>
+      )}
+    </Droppable>
+  );
+};
 
-export default Todos
+export default Todos;
